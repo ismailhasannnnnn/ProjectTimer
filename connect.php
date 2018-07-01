@@ -10,6 +10,7 @@ $servername = "localhost";
 $username = "ismailha_ismail";
 $password = "Stripes12";
 $dbName = "ismailha_seniorprojectlogger";
+date_default_timezone_set("America/Los_Angeles");
 
 $con = mysqli_connect($servername, $username, $password, $dbName);
 
