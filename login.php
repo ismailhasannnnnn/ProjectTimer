@@ -9,7 +9,6 @@
 
 include("connect.php");
 session_start();
-date_default_timezone_set("America/Los_Angeles");
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // username and password sent from form

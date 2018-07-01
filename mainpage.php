@@ -10,13 +10,14 @@ include("connect.php");
 session_start();
 date_default_timezone_set("America/Los_Angeles");
 
-if(isset($_POST['clockin'])){
+if (isset($_POST['clockin'])) {
     clockIn();
-}else if(isset($_POST['clockout'])){
+} else if (isset($_POST['clockout'])) {
     clockOut();
 }
 
-function clockIn(){
+function clockIn()
+{
     $name = $_SESSION['login_user'];
     $date = date("Y/m/d");
     $firstTime = date("h:i:s");
@@ -25,13 +26,13 @@ function clockIn(){
     $sql = "SELECT * FROM clockLogs WHERE Username = '$name'";
     $result = mysqli_query($GLOBALS['con'], $sql);
     $count = mysqli_num_rows($result);
-    if($count>0){
+    if ($count > 0) {
         $clockInSQL = "UPDATE clockLogs SET ClockedIn = TRUE WHERE Username = '$name'";
         mysqli_query($GLOBALS['con'], $clockInSQL);
         $timeSQL = "INSERT INTO timeLogs (Username, Date, clockInTime) VALUES ('$name', '$date', '$firstTime')";
         mysqli_query($GLOBALS['con'], $timeSQL);
         echo "Clocked in.";
-    }else{
+    } else {
         $clockInSQL = "INSERT INTO clockLogs (Username, ClockedIn) VALUES ('$name', TRUE)";
         mysqli_query($GLOBALS['con'], $clockInSQL);
         $timeSQL = "INSERT INTO timeLogs (Username, Date, clockInTime) VALUES ('$name', '$date', '$firstTime')";
@@ -40,7 +41,8 @@ function clockIn(){
     }
 }
 
-function clockOut(){
+function clockOut()
+{
     $name = $_SESSION['login_user'];
     $firstNameSQL = "SELECT clockInTime FROM timeLogs WHERE Username = 'ismail' AND clockOutTime = '00:00:00'";
     $result = mysqli_query($GLOBALS['con'], $firstNameSQL);
@@ -68,20 +70,20 @@ function clockOut(){
     <title>SP Logger</title>
 </head>
 <body>
-    <div style="text-align: right; font-size: 35px;">
-        <?php
-            echo "Logged in as " . $_SESSION['login_user'];
-        ?>
-    </div>
-    <br>
-    <div style="text-align: center">
-        <button onclick="location.href='index.php'">Home</button>
-    </div>
+<div style="text-align: right; font-size: 35px;">
+    <?php
+    echo "Logged in as " . $_SESSION['login_user'];
+    ?>
+</div>
+<br>
+<div style="text-align: center">
+    <button onclick="location.href='index.php'">Home</button>
+</div>
 
-    <form method="POST" action="mainpage.php">
-        <input type="submit" value="Clock In" name="clockin">
-        <br>
-        <input type="submit" value="Clock Out" name="clockout">
-    </form>
+<form method="POST" action="mainpage.php">
+    <input type="submit" value="Clock In" name="clockin">
+    <br>
+    <input type="submit" value="Clock Out" name="clockout">
+</form>
 </body>
 </html>

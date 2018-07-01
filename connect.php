@@ -14,6 +14,6 @@ date_default_timezone_set("America/Los_Angeles");
 
 $con = mysqli_connect($servername, $username, $password, $dbName);
 
-if(!$con){
+if (!$con) {
     die("Connection failed: " . mysqli_connect_error());
 }
