@@ -19,8 +19,7 @@ if (isset($_POST['clockin'])) {
 function clockIn()
 {
     $name = $_SESSION['login_user'];
-    $date = date("Y/m/d");
-    $firstTime = date("h:i:s");
+    $clockInEntry = date("Y/m/d") . " " . date("H:i:s");
 //    $clockInSQL = "INSERT INTO clockLogs (Username, ClockedIn) VALUES ('$name', TRUE)";
 //    mysqli_query($GLOBALS['con'], $clockInSQL);
     $sql = "SELECT * FROM clockLogs WHERE Username = '$name'";
@@ -29,13 +28,13 @@ function clockIn()
     if ($count > 0) {
         $clockInSQL = "UPDATE clockLogs SET ClockedIn = TRUE WHERE Username = '$name'";
         mysqli_query($GLOBALS['con'], $clockInSQL);
-        $timeSQL = "INSERT INTO timeLogs (Username, Date, clockInTime) VALUES ('$name', '$date', '$firstTime')";
+        $timeSQL = "INSERT INTO timeLogs (Username, clockIn) VALUES ('$name', '$clockInEntry')";
         mysqli_query($GLOBALS['con'], $timeSQL);
         echo "Clocked in.";
     } else {
         $clockInSQL = "INSERT INTO clockLogs (Username, ClockedIn) VALUES ('$name', TRUE)";
         mysqli_query($GLOBALS['con'], $clockInSQL);
-        $timeSQL = "INSERT INTO timeLogs (Username, Date, clockInTime) VALUES ('$name', '$date', '$firstTime')";
+        $timeSQL = "INSERT INTO timeLogs (Username, clockIn) VALUES ('$name', '$clockInEntry')";
         mysqli_query($GLOBALS['con'], $timeSQL);
         echo "Clocked in.";
     }
@@ -44,22 +43,25 @@ function clockIn()
 function clockOut()
 {
     $name = $_SESSION['login_user'];
-    $firstNameSQL = "SELECT clockInTime FROM timeLogs WHERE Username = 'ismail' AND clockOutTime = '00:00:00'";
+    $firstNameSQL = "SELECT clockIn FROM timeLogs WHERE Username = '$name' AND clockOut = '0000-00-00 00:00:00'";
     $result = mysqli_query($GLOBALS['con'], $firstNameSQL);
     $row = mysqli_fetch_array($result);
-    $firstTime = $row['clockInTime'];
-    $secondTime = date("h:i:s");
+    $clockInEntry = $row['clockIn'];
+    $clockOutEntry = date("Y/m/d") . " " . date("H:i:s");
     $clockOutSQL = "UPDATE clockLogs SET ClockedIn = FALSE WHERE Username = '$name'";
     mysqli_query($GLOBALS['con'], $clockOutSQL);
-    $timeSQL = "UPDATE timeLogs SET clockOutTime = '$secondTime' WHERE Username = '$name' AND clockInTime = '$firstTime'";
+    $timeSQL = "UPDATE timeLogs SET clockOut = '$clockOutEntry' WHERE Username = '$name' AND clockIn = '$clockInEntry'";
     mysqli_query($GLOBALS['con'], $timeSQL);
 
-    $timeSpentQuery = mysqli_query($GLOBALS['con'], "SELECT TIMEDIFF('$secondTime', '$firstTime')");
+    $timeSpentQuery = mysqli_query($GLOBALS['con'], "SELECT TIMESTAMPDIFF(SECOND, '$clockInEntry', '$clockOutEntry')");
     $timeSpentResult = mysqli_fetch_array($timeSpentQuery);
-    $timeSpent = $timeSpentResult['time_diff'];
-    $timeSpentSQL = "UPDATE timeLogs SET timeSpent = 'SELECT TIMEDIFF('$secondTime', '$firstTime')' WHERE Username = '$name' AND clockInTime = '$firstTime' AND clockOutTime = '$secondTime'";
+    $timeSpent = $timeSpentResult["TIMESTAMPDIFF(SECOND, '$clockInEntry', '$clockOutEntry')"];
+    $formatQuery = mysqli_query($GLOBALS['con'], "SELECT SEC_TO_TIME('$timeSpent')");
+    $formatResult = mysqli_fetch_array($formatQuery);
+    $formattedTimeSpent = $formatResult["SEC_TO_TIME('$timeSpent')"];
+    $timeSpentSQL = "UPDATE timeLogs SET timeSpent = '$formattedTimeSpent' WHERE Username = '$name' AND clockIn = '$clockInEntry' AND clockOut = '$clockOutEntry'";
     mysqli_query($GLOBALS['con'], $timeSpentSQL);
-    echo $timeSpent;
+    echo "Clocked out.";
 }
 
 ?>
