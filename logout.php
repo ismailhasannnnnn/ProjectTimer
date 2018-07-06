@@ -11,4 +11,4 @@ session_start();
 unset($_SESSION['login_user']);
 date_default_timezone_set("America/Los_Angeles");
 
-header("Location: login.php");
+header("Location: index.php");

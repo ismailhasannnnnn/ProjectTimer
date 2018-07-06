@@ -30,13 +30,11 @@ function clockIn()
         mysqli_query($GLOBALS['con'], $clockInSQL);
         $timeSQL = "INSERT INTO timeLogs (Username, clockIn) VALUES ('$name', '$clockInEntry')";
         mysqli_query($GLOBALS['con'], $timeSQL);
-        echo "Clocked in.";
     } else {
         $clockInSQL = "INSERT INTO clockLogs (Username, ClockedIn) VALUES ('$name', TRUE)";
         mysqli_query($GLOBALS['con'], $clockInSQL);
         $timeSQL = "INSERT INTO timeLogs (Username, clockIn) VALUES ('$name', '$clockInEntry')";
         mysqli_query($GLOBALS['con'], $timeSQL);
-        echo "Clocked in.";
     }
 }
 
@@ -61,7 +59,6 @@ function clockOut()
     $formattedTimeSpent = $formatResult["SEC_TO_TIME('$timeSpent')"];
     $timeSpentSQL = "UPDATE timeLogs SET timeSpent = '$formattedTimeSpent' WHERE Username = '$name' AND clockIn = '$clockInEntry' AND clockOut = '$clockOutEntry'";
     mysqli_query($GLOBALS['con'], $timeSpentSQL);
-    echo "Clocked out.";
 }
 
 ?>
@@ -81,11 +78,66 @@ function clockOut()
 <div style="text-align: center">
     <button onclick="location.href='index.php'">Home</button>
 </div>
+<br>
+<div style="text-align: center">
+    <form method="POST" action="logout.php">
+        <input type="submit" value="Log Out" name="logOut">
+    </form>
 
-<form method="POST" action="mainpage.php">
-    <input type="submit" value="Clock In" name="clockin">
-    <br>
-    <input type="submit" value="Clock Out" name="clockout">
-</form>
+    <form method="POST" action="mainpage.php">
+<!--        <input type='submit' value='Clock In' name='clockin'>-->
+<!--        <br>-->
+<!--        <br>-->
+<!--        <input type='submit' value='Clock Out' name='clockout'>-->
+
+
+        <?php
+        $name = $_SESSION['login_user'];
+        $queryResult = mysqli_query($con, "SELECT ClockedIn FROM clockLogs WHERE Username='$name'");
+        $resultArray = mysqli_fetch_array($queryResult);
+        $clockedIn = $resultArray["ClockedIn"];
+
+        if($clockedIn == 0){
+            echo "<input type='submit' value='Clock In' name='clockin'>";
+        }else if($clockedIn == 1){
+            echo "<input type='submit' value='Clock Out' name='clockout'>";
+        }
+
+        ?>
+
+    </form>
+</div>
+
+<br>
+
+<div style="text-align: center">
+    <?php
+        $name = $_SESSION['login_user'];
+        $queryResult = mysqli_query($con, "SELECT ClockedIn FROM clockLogs WHERE Username='$name'");
+        $resultArray = mysqli_fetch_array($queryResult);
+        $clockedIn = $resultArray["ClockedIn"];
+
+        if($clockedIn == 0){
+            echo "Clocked out.";
+        }else if($clockedIn == 1){
+            echo "Clocked in.";
+        }
+
+    ?>
+</div>
+
+<br>
+<div style="text-align: center">
+    <?php
+    $name = $_SESSION['login_user'];
+    echo "Total time spent on project: ";
+    $timeSQL = "SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( `timeSpent` ) ) ) FROM timeLogs WHERE Username='$name'";
+    $timeResult = mysqli_query($con, $timeSQL);
+    $timeRows = mysqli_fetch_array($timeResult);
+    $timeNumberRows = mysqli_num_rows($timeResult);
+    $timeTotal = $timeRows['SEC_TO_TIME( SUM( TIME_TO_SEC( `timeSpent` ) ) )'];
+    print_r($timeTotal);
+    ?>
+</div>
 </body>
 </html>

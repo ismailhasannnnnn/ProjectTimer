@@ -7,93 +7,82 @@
  */
 include("connect.php");
 session_start();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = mysqli_real_escape_string($con, $_POST['name']);
-    $loginName = mysqli_real_escape_string($con, $_POST['name']);
-    $password = mysqli_real_escape_string($con, $_POST['password']);
-    $phoneNumber = mysqli_real_escape_string($con, $_POST['phoneNumber']);
-    $secondPassword = mysqli_real_escape_string($con, $_POST['secondPassword']);
-
-    $sql = "SELECT * FROM logins WHERE Username = '$name'";
-    $result = mysqli_query($con, $sql);
-    $row = mysqli_fetch_array($result);
-
-    $count = mysqli_num_rows($result);
-
-    if ($count == 0 && $password === $secondPassword) {
-        $sql2 = "INSERT INTO logins (Username, Password, PhoneNumber) VALUES ('$name', '$password', '$phoneNumber')";
-        mysqli_query($con, $sql2);
-    } else if ($count == 0 && $password !== $secondPassword) {
-        $passwordError = "Passwords don't match.";
-    } else {
-        $error = "Username already taken";
-    }
+if (isset($_SESSION['login_user'])) {
+    header("Location: mainpage.php");
 }
+
 ?>
+
 <html>
+
 <head>
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans" rel="stylesheet">
+
     <title> Senior Project Logger </title>
+    <link rel="stylesheet" href="css/foundation.css">
     <link rel="stylesheet" href="css/index.css">
-    <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Condensed" rel="stylesheet">
-    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="assets/clockicon.png">
+
 </head>
+
 <body>
 
-<!-- Javascript for logo -->
+<!--   Javascript for elements -->
+
+<nav class="top-bar">
+    <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+            <li class="menu-text"><a id="topbarlogo" href="index.php"> Senior Project Logger</a></li>
+            <li><a href="#"> Learn more</a></li>
+            <li><a href="#"> Contact us</a></li>
+
+        </ul>
+    </div>
+    <div class="top-bar-right">
+        <ul class="dropdown menu" data-dropdown-menu>
+            <li><a href="#"><button class="roundbuttons" onclick="location.href='login.php'"> Login </button></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="row" id="middiv">
+    <div class="columns large-6" align="center">
+        <img id="logo" src="assets/Senior%20Project%20Logo%20Iteration%202%20.png">
+    </div>
+    <div class="desc" align="center">
+        <button class="roundbuttons2" onclick="location.href='register.php'"> Get Started </button>
+    </div>
+</div>
+<div class="row" id="bottomdiv">
+    <div class="columns large-6" align="center">
+        <h1> <b> Timing? We'll take care of that. </b></h1>
+        <p> Senior Project Logger is a simple but effective timer that helps you keep track of how much time you've spent on your project. A clock-in clock-out system ensures that all you need to worry about is your actual project. Just create an account and you're good to go! </p>
+        <img id="clock" src="assets/white%20clock.png">
+    </div>
+</div>
+<div class="row" id="creditsdiv">
+    <div class="columns large-6" align="center">
+        <h2> Reach us at <u>seniorprojectlogo@gmail.com</u> </h2>
+        <br>
+        <h3>The SPL was created by Marcus Barga, Justin Gonzales, and Ismail Hasan.</h3>
+    </div>
+</div>
+</body>
+
+<!--   Javascript for Elements  -->
+
 <script>
     jQuery.noConflict();
-
 </script>
 <script src="jquery-3.3.1.min.js"></script>
 <script>
-    $(function () {
-        $("div.buttons").hide().delay(10).fadeIn(2000);
-        $("#credits").hide().delay(10).fadeIn(2000);
-        $("#logo").hide().delay(10).fadeIn(2000);
+    $(function() {
+        $("#middiv").hide().delay(10).fadeIn(2000);
+        $("#bottomdiv").hide().delay(10).fadeIn(2000);
+        $("#creditsdiv").hide().delay(10).fadeIn(2000);
     });
 </script>
-<!-- Javascript for logo -->
 
+<!--   JavaScript-->
 
-<div id="top-question">
-    <a class="a" href="//coder696.org/wip"> What is the Senior Project Logger? </a>
-</div>
-<div style="text-align: right">
-
-    <?php
-    if (isset($_SESSION['login_user'])) {
-        echo "<div style=\"text-align: center\">
-            <button onclick=\"location.href='logout.php'\">Log out</button>
-            </div>";
-        echo "Logged in as " . $_SESSION['login_user'];
-    } else {
-        echo "<div>Not logged in.</div>";
-    }
-    ?>
-</div>
-
-<div id="Login">
-
-    <header class="logo">
-        <img id="logo" src="assets/Senior%20Project%20Logo%20Iteration%202%20.png" alt="Senior Project Logo">
-    </header>
-
-    <div class="buttons">
-        <button type="button" class="btn" onclick="location.href='register.php'"> Get Started</button>
-        <button class="btn" onclick="location.href='login.php'"> Login</button>
-
-    </div>
-
-
-</div>
-
-
-<div id="credits">
-
-    Created by Marcus Barga, Ismail Hasan, and Justin Gonzales
-
-</div>
-
-</body>
 </html>

@@ -30,7 +30,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $error = "Username already taken";
     }
+
+    /*
+ * Carrier Lookup
+ */
+
+// set API Access Key
+    $access_key = '6dcdabe6bcf07613850c731f683e7cdb';
+
+// Initialize CURL:
+    $ch = curl_init('http://apilayer.net/api/validate?access_key=' . $access_key . '&number=' . $phoneNumber . '');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+// Store the data:
+    $json = curl_exec($ch);
+    curl_close($ch);
+
+// Decode JSON response:
+    $validationResult = json_decode($json, true);
+
+// Access and use your preferred validation result objects
+    $valid = $validationResult['valid'];
+    $carrier = $validationResult['carrier'];
+
+    mysqli_query($con, "UPDATE logins SET Carrier = '$carrier' WHERE PhoneNumber = '$phoneNumber' AND Username = '$name'");
+
+
 }
+
 ?>
 
 <html>
@@ -76,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         </div>
 
-        <!--<?php echo $name ?>-->
+<!--        --><?php //echo $validationResult['carrier'] ?>
 
 
         <div id="textbox"><input class="textbox" placeholder="Password" class="password" style="text-align: center;"
@@ -112,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!--        <input type="submit" value="Register" class="submitButton" name="Submit">-->
 
 
-        <div align="center" style="font-size:15px">
+        <div style="font-size:15px; align: center">
             <?php echo $error; ?>
         </div>
 
@@ -128,6 +155,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 </form>
+
+<div>
+    <?php
+    echo $validationResult['carrier'];
+    ?>
+</div>
 
 
 </body>
