@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="jdbc:mysql://coder696.org:2083/cpsess9277527256/3rdparty/phpMyAdmin/index.php?token=f3e0bf5016d636f0d0dc0931571262f4:3306/ismailha_seniorprojectlogger" uuid="8b2fa578-b1c9-4923-8b13-41b564f0dc2d">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <secret-storage>master_key</secret-storage>
+      <first-sync>true</first-sync>
+      <user-name>ismailha_ismail</user-name>
+    </data-source>
+  </component>
+</project>
